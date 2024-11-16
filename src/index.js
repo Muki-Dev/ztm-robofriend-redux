@@ -8,7 +8,7 @@ import reportWebVitals from './reportWebVitals';
 import { searchRobots } from './reducers';
 import 'tachyons'
 
-const store = createStore( searchRobots)
+const store = createStore( searchRobots )
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

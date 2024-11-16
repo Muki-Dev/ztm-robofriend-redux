@@ -1,21 +1,31 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import CardList from '../Components/CardList';
 import SearchBox from '../Components/SearchBox';
-import './App.css';
 import Scroll from '../Components/Scroll';
+import { setSearchField } from '../Actions';
+import './App.css';
+
+const mapStateToProps = state => {
+    return {
+      searchField: state.searchField
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return{
+    onSearchChange: (event) => dispatch(setSearchField(event.target.value))
+  }
+}
 
 class App extends Component{
  constructor(){
     super()
     this.state = {
-      robots:[],
-      searchfield: ''
+      robots:[]
     }
 }
 
-onSearchChange = (event) => {
-    this.setState({ searchfield: event.target.value})
-}
 
 componentDidMount(){
   fetch('https://jsonplaceholder.typicode.com/users')
@@ -24,19 +34,25 @@ componentDidMount(){
 }
 
   render(){
-    const filteredRobots = this.state.robots.filter(robot => {
-      return robot.name.toLocaleLowerCase().includes(this.state.searchfield.toLocaleLowerCase())
+      const { robots } = this.state;
+      const { searchField,onSearchChange } = this.props;
+
+      const filteredRobots = robots.filter(robot => {
+        return robot.name.toLowerCase().includes(searchField.toLowerCase());
     })
-    return(
-      <div className='tc'>
-        <h1 className='f1'>Ztm-Robofriend-redux</h1>
-        <SearchBox searchChange = {this.onSearchChange} />
-        <Scroll>
-            <CardList robots={filteredRobots} />
-        </Scroll>
-      </div>
-      )
+      return !robots.length ?
+        <h1>Loading</h1>
+      
+      : (
+        <div className='tc'>
+          <h1 className='f1'>Ztm-Robofriend-redux</h1>
+          <SearchBox searchChange = { onSearchChange } />
+          <Scroll>
+              <CardList robots={filteredRobots} />
+          </Scroll>
+        </div>
+        )
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
